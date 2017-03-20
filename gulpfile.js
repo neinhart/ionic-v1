@@ -27,7 +27,7 @@ var gulpif = require('gulp-if');
 var header = require('gulp-header');
 var eslint = require('gulp-eslint');
 var jscs = require('gulp-jscs');
-var minifyCss = require('gulp-minify-css');
+var cleanCSS = require('gulp-clean-css');
 var rename = require('gulp-rename');
 var rimraf = require("rimraf");
 var runSequence = require('run-sequence');
@@ -37,7 +37,7 @@ var template = require('gulp-template');
 var uglify = require('gulp-uglify');
 var gutil = require('gulp-util');
 
-var banner = _.template(buildConfig.banner, { pkg: pkg });
+var banner = _.template(buildConfig.banner)({ pkg: pkg });
 
 var IS_RELEASE_BUILD = !!argv.release;
 if (IS_RELEASE_BUILD) {
@@ -205,7 +205,7 @@ gulp.task('sass', function(done) {
     }))
     .pipe(concat('ionic.css'))
     .pipe(gulp.dest(buildConfig.dist + '/css'))
-    .pipe(gulpif(IS_RELEASE_BUILD, minifyCss()))
+    .pipe(gulpif(IS_RELEASE_BUILD, cleanCSS()))
     .pipe(rename({ extname: '.min.css' }))
     .pipe(gulp.dest(buildConfig.dist + '/css'))
     .on('end', done);

@@ -4,9 +4,9 @@ var connect = require('connect');
 var cp = require('child_process');
 var gutil = require('gulp-util');
 var http = require('http');
-var karma = require('karma').server;
+var Server = require('karma').Server;
 var path = require('canonical-path');
-var uuid = require('node-uuid');
+var uuid = require('uuid');
 
 var projectRoot = path.resolve(__dirname, '../..');
 
@@ -51,17 +51,17 @@ module.exports = function(gulp, argv) {
 
   gulp.task('karma', function(done) {
     karmaConf.singleRun = true;
-    karma.start(karmaConf, done);
+    new Server(karmaConf, done).start();
   });
 
   gulp.task('karma-watch', function(done) {
     karmaConf.singleRun = false;
-    karma.start(karmaConf, done);
+    new Server(karmaConf, done).start();
   });
 
   gulp.task('karma-sauce', ['run-karma-sauce'], sauceDisconnect);
   gulp.task('run-karma-sauce', ['sauce-connect'], function(done) {
-    return karma.start(karmaSauceConf, done);
+    new Server(karmaSauceConf, done).start();
   });
 
 
@@ -106,7 +106,7 @@ module.exports = function(gulp, argv) {
       '--params.height=<%= params.height %>',
       '--params.test_id=<%= params.test_id %>',
     ].map(function(argument) {
-      return _.template(argument, snapshotValues);
+      return _.template(argument)(snapshotValues);
     });
 
     return protractor(done, [configFile].concat(protractorArgs));

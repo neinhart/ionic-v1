@@ -12,5 +12,7 @@ describe('SideMenu', function() {
   it('Should init', function() {
     expect(menu.width).toEqual(270);
     expect(menu.isEnabled).toEqual(true);
+    expect(menu.displayType).toEqual('push');
+    expect(menu.leaveContentActive).toEqual(false);
   });
 });

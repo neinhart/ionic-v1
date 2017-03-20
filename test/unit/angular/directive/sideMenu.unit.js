@@ -9,7 +9,7 @@ describe('Ionic Angular Side Menu', function() {
 
   it('should register with $ionicSideMenuDelegate', inject(function($compile, $rootScope, $ionicSideMenuDelegate) {
     var deregisterSpy = jasmine.createSpy('deregister');
-    spyOn($ionicSideMenuDelegate, '_registerInstance').andCallFake(function() {
+    spyOn($ionicSideMenuDelegate, '_registerInstance').and.callFake(function() {
       return deregisterSpy;
     });
     var el = $compile('<ion-side-menus delegate-handle="superHandle">')($rootScope.$new());
@@ -78,7 +78,7 @@ describe('Ionic Angular Side Menu', function() {
     expect(content.offsetX).toEqual(275);
     expect(content.getTranslateX()).toEqual(0);
     expect(content.element.getAttribute('style')).toMatch(/translate3d\(275px, 0(px)?, 0(px)?/);
-    expect(content.element.style.width).toNotEqual('');
+    expect(content.element.style.width).not.toEqual('');
     sideMenuController.exposeAside(false);
     expect(content.element.getAttribute('style')).toMatch(/translate3d\(0(px)?, 0(px)?, 0(px)?/);
     expect(content.getTranslateX()).toEqual(0);
@@ -219,6 +219,20 @@ describe('Ionic Angular Side Menu', function() {
 
   }));
 
+  it('should closeMenuOnTap', inject(function($compile, $rootScope) {
+    var el = $compile('<ion-side-menus><div ion-side-menu-content></div></ion-side-menus>')($rootScope.$new());
+    $rootScope.$apply();
+    expect(el.controller('ionSideMenus').closeMenuOnTap()).toBe(true);
+    expect(el.scope().closeMenuOnTap).toBe(true);
+
+    el.controller('ionSideMenus').closeMenuOnTap(false);
+    expect(el.controller('ionSideMenus').closeMenuOnTap()).toBe(false);
+    expect(el.scope().closeMenuOnTap).toBe(false);
+
+    el.controller('ionSideMenus').closeMenuOnTap(true);
+    expect(el.controller('ionSideMenus').closeMenuOnTap()).toBe(true);
+    expect(el.scope().closeMenuOnTap).toBe(true);
+  }));
 });
 
 describe('Ionic Side Menu Content Directive', function () {

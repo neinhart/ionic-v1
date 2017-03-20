@@ -38,12 +38,12 @@ describe('$ionicSideMenus controller', function() {
       }, {}));
       angular.extend(ctrl, {});
       ctrl.left = new ionic.views.SideMenu({
-        width: 270,
+        width: 272,
         el: document.createElement('div'),
         isEnabled: true
       });
       ctrl.right = new ionic.views.SideMenu({
-        width: 270,
+        width: 272,
         el: document.createElement('div'),
         isEnabled: true
       });
@@ -69,10 +69,34 @@ describe('$ionicSideMenus controller', function() {
     expect(ctrl.right.isEnabled).toEqual(true);
   });
 
+  // Menu displayType
+  it('should set displayType', function() {
+    ctrl.left.setDisplayType('overlay');
+    ctrl.right.setDisplayType('overlay');
+    expect(ctrl.left.displayType).toEqual('overlay');
+    expect(ctrl.right.displayType).toEqual('overlay');
+    ctrl.left.setDisplayType('push');
+    ctrl.right.setDisplayType('push');
+    expect(ctrl.left.displayType).toEqual('push');
+    expect(ctrl.right.displayType).toEqual('push');
+  });
+
+  // Menu leaveContentActive
+  it('should set leaveContentActive', function() {
+    ctrl.left.setLeaveContentActive(true);
+    ctrl.right.setLeaveContentActive(true);
+    expect(ctrl.left.leaveContentActive).toEqual(true);
+    expect(ctrl.right.leaveContentActive).toEqual(true);
+    ctrl.left.setLeaveContentActive(false);
+    ctrl.right.setLeaveContentActive(false);
+    expect(ctrl.left.leaveContentActive).toEqual(false);
+    expect(ctrl.right.leaveContentActive).toEqual(false);
+  });
+
   // Menu widths
   it('should init widths', function() {
-    expect(ctrl.left.width).toEqual(270);
-    expect(ctrl.right.width).toEqual(270);
+    expect(ctrl.left.width).toEqual(272);
+    expect(ctrl.right.width).toEqual(272);
   });
 
   it('should have amount and percentage correct', function() {
@@ -151,7 +175,7 @@ describe('$ionicSideMenus controller', function() {
     expect(ctrl.getOpenPercentage()).toEqual(0);
     ctrl.left.isEnabled = true;
     ctrl.toggleLeft();
-    expect(ctrl.getOpenPercentage()).toNotEqual(0);
+    expect(ctrl.getOpenPercentage()).not.toEqual(0);
   });
 
   it('should not toggle right when disabled', function() {
@@ -161,7 +185,7 @@ describe('$ionicSideMenus controller', function() {
     expect(ctrl.getOpenPercentage()).toEqual(0);
     ctrl.right.isEnabled = true;
     ctrl.toggleRight();
-    expect(ctrl.getOpenPercentage()).toNotEqual(0);
+    expect(ctrl.getOpenPercentage()).not.toEqual(0);
   });
 
   it('should close left menu on expose aside', function() {
@@ -307,9 +331,9 @@ describe('$ionicSideMenus controller', function() {
   it('should register with backButton on open and dereg on close', inject(function($ionicPlatform, IONIC_BACK_PRIORITY) {
     var openAmount = 0;
     var deregSpy = jasmine.createSpy('deregister');
-    spyOn($ionicPlatform, 'registerBackButtonAction').andReturn(deregSpy);
+    spyOn($ionicPlatform, 'registerBackButtonAction').and.returnValue(deregSpy);
 
-    spyOn(ctrl, 'getOpenAmount').andCallFake(function() { return openAmount; });
+    spyOn(ctrl, 'getOpenAmount').and.callFake(function() { return openAmount; });
 
     expect($ionicPlatform.registerBackButtonAction).not.toHaveBeenCalled();
     openAmount = 1;
@@ -328,45 +352,49 @@ describe('$ionicSideMenus controller', function() {
     // create spies and event listeners
     var openSpy = jasmine.createSpy('openSpy');
     $rootScope.$on('$ionicSideMenuOpen', openSpy);
-    var closeSpy = jasmine.createSpy('openSpy');
+    var closeSpy = jasmine.createSpy('closeSpy');
     $rootScope.$on('$ionicSideMenuClose', closeSpy);
 
     // left open
+    openSpy.calls.reset();
     ctrl.toggleLeft();
     expect(ctrl.getOpenPercentage()).toEqual(100);
     ctrl.$scope.$apply();
     expect(openSpy).toHaveBeenCalled();
-    expect(openSpy.mostRecentCall.args[1]).toEqual("left");
+    expect(openSpy.calls.argsFor(0)[1]).toEqual("left");
 
     // left close
+    closeSpy.calls.reset();
     ctrl.toggleLeft();
     expect(ctrl.getOpenPercentage()).toEqual(0);
     ctrl.$scope.$apply();
     expect(closeSpy).toHaveBeenCalled();
-    expect(closeSpy.mostRecentCall.args[1]).toEqual("left");
+    expect(closeSpy.calls.argsFor(0)[1]).toEqual("left");
 
     // right open
+    openSpy.calls.reset();
     ctrl.toggleRight();
     expect(ctrl.getOpenPercentage()).toEqual(-100);
     ctrl.$scope.$apply();
     expect(openSpy).toHaveBeenCalled();
-    expect(openSpy.mostRecentCall.args[1]).toEqual("right");
+    expect(openSpy.calls.argsFor(0)[1]).toEqual("right");
 
     // right close
+    closeSpy.calls.reset();
     ctrl.toggleRight();
     expect(ctrl.getOpenPercentage()).toEqual(0);
     ctrl.$scope.$apply();
     expect(closeSpy).toHaveBeenCalled();
-    expect(closeSpy.mostRecentCall.args[1]).toEqual("right");
+    expect(closeSpy.calls.argsFor(0)[1]).toEqual("right");
   }));
 
 
   it('should deregister back button action on $destroy', inject(function($ionicPlatform) {
     var openAmount = 0;
     var deregSpy = jasmine.createSpy('deregister');
-    spyOn($ionicPlatform, 'registerBackButtonAction').andReturn(deregSpy);
+    spyOn($ionicPlatform, 'registerBackButtonAction').and.returnValue(deregSpy);
 
-    spyOn(ctrl, 'getOpenAmount').andCallFake(function() { return openAmount; });
+    spyOn(ctrl, 'getOpenAmount').and.callFake(function() { return openAmount; });
 
     expect($ionicPlatform.registerBackButtonAction).not.toHaveBeenCalled();
     openAmount = 1;
